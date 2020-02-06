@@ -18,7 +18,7 @@ from sklearn.metrics import accuracy_score
 # DO NOT CHANGE THE SIGNATURES OF ANY DEFINED FUNCTIONS.
 # YOU CAN ADD "HELPER" FUNCTIONS IF YOU LIKE.
 
-N = 20
+N = 3
 
 def word_counts_n(txt, n=100):
     to_df = []
@@ -82,8 +82,6 @@ def part1_load(folder1, folder2):
     
     return df
 
-print(part1_load("crude", "grain"))
-
 def part2_vis(df):
     assert isinstance(df, pd.DataFrame)
 
@@ -108,9 +106,6 @@ def part3_tfidf(df):
     assert isinstance(df, pd.DataFrame)
     total = len(df.index)
     return df.transform(lambda c: tfidf(c, total, doc_count(df, c.name)) if c.name not in ["class", "filename"] else c)
-    
-df = part1_load("crude", "grain")
-# print(part3_tfidf(df))
 
 def distribute_train(data):
     #assigning the class column as target
@@ -120,25 +115,29 @@ def distribute_train(data):
     dt = data[cols]
     #print(dt, target)
     
-    data_train, data_test, target_train, target_test = train_test_split(dt,target, test_size = 0.30, random_state = 10)
+    data_train, data_test, target_train, target_test = train_test_split(dt,target, test_size = 0.30, random_state = 20)
 
-    neigh = KNeighborsClassifier(n_neighbors=3)
-    #Train the algorithm
-    neigh.fit(data_train, target_train)
-    # predict the response
-    pred = neigh.predict(data_test)
-    # evaluate accuracy
-    print ("KNeighbors accuracy score : ",accuracy_score(target_test, pred))
-    return accuracy_score(target_test, pred)
+    # neigh = KNeighborsClassifier(n_neighbors=3)
+    # #Train the algorithm
+    # neigh.fit(data_train, target_train)
+    # # predict the response
+    # pred = neigh.predict(data_test)
+    # # print(pred.tolist())
+    # # evaluate accuracy
+    # # print ("KNeighbors accuracy score : ", accuracy_score(target_test, pred))
+    # return accuracy_score(target_test, pred)
     
     #create an object of the type GaussianNB
-    #gnb = GaussianNB()
+    gnb = GaussianNB()
     #train the algorithm on training data and predict using the testing data
-    #pred = gnb.fit(data_train, target_train).predict(data_test)
-    #print(pred.tolist())
+    pred = gnb.fit(data_train, target_train).predict(data_test)
+    #print("nnnnnnnn", pred.tolist())
     #print the accuracy score of the model
 
     #print("Naive-Bayes accuracy : ", accuracy_score(target_test, pred, normalize = True))
-    #return accuracy_score(target_test, pred, normalize = True)
+    return accuracy_score(target_test, pred, normalize = True)
 
-print(distribute_train(part3_tfidf(df)))
+# df = part1_load("crude", "grain")
+# print(df)
+# print("tf   ", distribute_train(df))
+# print("tfidf", distribute_train(part3_tfidf(df)))
