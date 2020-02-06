@@ -7,9 +7,13 @@ from glob import glob
 from collections import Counter
 import math 
 
+from sklearn.neighbors import KNeighborsClassifier 
 from sklearn.model_selection import train_test_split
 from sklearn import datasets
 from sklearn import svm
+from sklearn.naive_bayes import GaussianNB
+
+from sklearn.metrics import accuracy_score
 
 # DO NOT CHANGE THE SIGNATURES OF ANY DEFINED FUNCTIONS.
 # YOU CAN ADD "HELPER" FUNCTIONS IF YOU LIKE.
@@ -78,7 +82,7 @@ def part1_load(folder1, folder2):
     
     return df
 
-# print(part1_load("crude", "grain"))
+print(part1_load("crude", "grain"))
 
 def part2_vis(df):
     assert isinstance(df, pd.DataFrame)
@@ -105,8 +109,36 @@ def part3_tfidf(df):
     total = len(df.index)
     return df.transform(lambda c: tfidf(c, total, doc_count(df, c.name)) if c.name not in ["class", "filename"] else c)
     
-# df = part1_load("crude", "grain")
+df = part1_load("crude", "grain")
 # print(part3_tfidf(df))
 
-def part_bonus(df):
+def distribute_train(data):
+    #assigning the class column as target
+    target = data['class']
+    cols = [col for col in data.columns if col not in ['class','filename']]
+    # dropping the columns
+    dt = data[cols]
+    #print(dt, target)
     
+    data_train, data_test, target_train, target_test = train_test_split(dt,target, test_size = 0.30, random_state = 10)
+
+    neigh = KNeighborsClassifier(n_neighbors=3)
+    #Train the algorithm
+    neigh.fit(data_train, target_train)
+    # predict the response
+    pred = neigh.predict(data_test)
+    # evaluate accuracy
+    print ("KNeighbors accuracy score : ",accuracy_score(target_test, pred))
+    return accuracy_score(target_test, pred)
+    
+    #create an object of the type GaussianNB
+    #gnb = GaussianNB()
+    #train the algorithm on training data and predict using the testing data
+    #pred = gnb.fit(data_train, target_train).predict(data_test)
+    #print(pred.tolist())
+    #print the accuracy score of the model
+
+    #print("Naive-Bayes accuracy : ", accuracy_score(target_test, pred, normalize = True))
+    #return accuracy_score(target_test, pred, normalize = True)
+
+print(distribute_train(part3_tfidf(df)))
