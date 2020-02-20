@@ -12,7 +12,6 @@ from sklearn import datasets
 #from sklearn.naive_bayes import GaussianNB
 #from sklearn.svm import LinearSVC
 from sklearn.svm import SVC
-
 from sklearn.metrics import accuracy_score
 
 # DO NOT CHANGE THE SIGNATURES OF ANY DEFINED FUNCTIONS.
@@ -120,11 +119,13 @@ def distribute_train(data):
     clf = pred.predict(data_test)
     return accuracy_score(target_test, clf)
 
+    # KNEIGH clf
     #neigh = KNeighborsClassifier(n_neighbors=3)
     #neigh.fit(data_train, target_train)
     #pred = neigh.predict(data_test)
     #return accuracy_score(target_test, pred)
     
+    # Naive clf
     #gnb = GaussianNB()
     #pred = gnb.fit(data_train, target_train).predict(data_test)
     #return accuracy_score(target_test, pred, normalize = True)
