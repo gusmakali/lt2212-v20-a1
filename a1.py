@@ -26,9 +26,6 @@ def word_counts_n(txt):
             to_df.append(count)
     return to_df
 
-def tf(txts, count_w):
-    return count_w/len(txts)
-
 
 
 def part1_load(folder1, folder2, n=1):
@@ -175,7 +172,7 @@ def distribute_train(data):
     # return accuracy_score(target_test, pred, normalize = True)
 
 
-df = part1_load("crude", "grain", 470)
+df = part1_load("crude", "grain", 300)
 
 print("tf   ", distribute_train(df))
 print("tfidf", distribute_train(part3_tfidf(df)))
