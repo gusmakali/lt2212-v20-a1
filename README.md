@@ -1,11 +1,11 @@
 # LT2212 V20 Assignment 1
 
-Currently the program prints pandas dataframes and accuracy scores for words appearing more than 3 times in the text files (n=3).
-The first part uses a helper function which counts words and words appearing more than n times.
+Currently the program prints pandas dataframes and accuracy scores for words appearing more than 300 times in all corpus (n=3).
+The first part uses a helper function which counts words per document. 
 
-Two helper functions are also used to calculate tf-idf according to the formula and count term frequency ("raw count").
+Three small (one step) helper functions are also used to calculate tf-idf according to the formula: one finction is a general furmula for tfidf and another one calculates a number of documents with word. The third one is to extract idf per corpus.
 
-A bonus part "distribute_train" currently uses SVM classifier as I think it works the best with this data. However, the commented part contains code for two more classifiers - GausianNB and KNeighbours. To run them just uncomment parts in distribute_train as well as imports.
+A bonus part "distribute_train" currently uses KNeigbours classifier as I think it works the best with this data. However, the commented part contains code for two more classifiers - GausianNB and SVC. To run them just uncomment parts in distribute_train as well as imports.
 
-All of the classifiers show pretty good score for accuracy. The SVM classifier gives 80% accuracy for part1 dataframe, and 84% for tf-idf.
-Logically, tf-idf shows a bit better score. However, depending on the n value in part1 (n is how many times the words need to be appearing in the text at minimum), the ratio may change and in some cases classifiers show almost the same accurasy for both tf and tfidf. 
+All of the classifiers show pretty good score for accuracy. The KNeigh classifier gives 80-90% accuracy for both dataframes, depending on the n value in part1. The accuracy falls when classifier is run on tfidf with N being a small numebr, and grows when N is a bigger value. Vice versa, for bigger N there is lower accuracy when run on part1 dataframe. 
+
