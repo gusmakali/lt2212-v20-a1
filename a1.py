@@ -171,7 +171,7 @@ def distribute_train(data):
     # pred = gnb.fit(data_train, target_train).predict(data_test)
     # return accuracy_score(target_test, pred, normalize = True)
 
-
+ 
 df = part1_load("crude", "grain", 300)
 
 print("tf   ", distribute_train(df))
