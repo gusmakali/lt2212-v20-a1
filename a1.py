@@ -6,7 +6,7 @@ import numpy.random as npr
 from glob import glob
 from collections import Counter
 # for different classifiers 
-#from sklearn.neighbors import KNeighborsClassifier 
+from sklearn.neighbors import KNeighborsClassifier 
 from sklearn.model_selection import train_test_split
 from sklearn import datasets
 #from sklearn.naive_bayes import GaussianNB
@@ -17,14 +17,20 @@ from sklearn.metrics import accuracy_score
 # DO NOT CHANGE THE SIGNATURES OF ANY DEFINED FUNCTIONS.
 # YOU CAN ADD "HELPER" FUNCTIONS IF YOU LIKE.
 
-def word_counts_n(txt, n=100):
+def word_counts_n(txt):
+
+    # COUNT PER FILE
     to_df = []
     for count in Counter(txt.lower().split(" ")).most_common():
-        if count[1] > n and count[0].isalpha():
+        if count[0].isalpha():
             to_df.append(count)
-
     return to_df
-    
+
+def tf(txts, count_w):
+    return count_w/len(txts)
+
+
+
 def part1_load(folder1, folder2, n=1):
     # CHANGE WHATEVER YOU WANT *INSIDE* THIS FUNCTION.
 
@@ -33,7 +39,7 @@ def part1_load(folder1, folder2, n=1):
 
     allfiles = files_dir1 + files_dir2
     
-    # create names for colums
+   # create names for colums
     column = {}
     filenames = []
     classnames = []
@@ -45,7 +51,7 @@ def part1_load(folder1, folder2, n=1):
 
     for f in allfiles:
         with open (f, "r") as doc:
-            word_n = word_counts_n(doc.read(), n) 
+            word_n = word_counts_n(doc.read()) 
 
         if len(word_n) == 0:
             continue
@@ -56,9 +62,13 @@ def part1_load(folder1, folder2, n=1):
             wordcounts[f][word[0]] = word[1]
             if word[0] not in column:
                 column[word[0]] = []
+
+  
+            
     for f in allfiles:
         with open (f, "r") as doc:
-            word_n = word_counts_n(doc.read(), n)
+            word_n = word_counts_n(doc.read())
+            
         for c in column:
             if c == "filename":
                 filenames.append(f)
@@ -73,8 +83,36 @@ def part1_load(folder1, folder2, n=1):
             else:
                 column[c].append(0)
 
+
     column["class"] = classnames
     column["filename"] = filenames
+
+
+    # FILTER BY N PER CORPUS
+
+    for name in column.copy():
+        
+        if name is not "filename" and name is not "class":
+            sum_perdata = sum(column[name]) #sum count for all word in coprus
+
+            if sum_perdata < n:
+                column.pop(name)
+
+    # calc tf on filetered data
+    l = []
+
+    for f in allfiles:
+        with open (f, "r") as doc:
+            l.append(len(doc.read()))
+
+    for name in column:
+        
+        if name is not "class" and name is not "filename":
+            t = column[name] #list of all counts
+            res_c = [float(ti)/li for ti,li in zip(t,l)]
+            column[name] = res_c
+        
+    
     df = pd.DataFrame(column)
     
     return df
@@ -91,8 +129,6 @@ def part2_vis(df, n=1):
     
     return pd.pivot_table(df, columns=["class"], values=m, aggfunc=np.max).plot(kind="bar")
 
-def tfidf(tf, totaldocs, docswithword):
-    return tf * (np.log10(totaldocs / docswithword) + 1)
 
 def doc_count(df, word):
     count = 0
@@ -100,6 +136,15 @@ def doc_count(df, word):
         if i != 0:
             count += 1
     return count
+
+    # IDF IS CONSTANT PER CORPUS
+def idf(len_corpus, docswithword):
+    return np.log10(len_corpus/ docswithword)
+
+
+def tfidf(tf, len_corpus, docswithword):
+    return tf * idf(len_corpus, docswithword)
+
 
 def part3_tfidf(df): 
     assert isinstance(df, pd.DataFrame)
@@ -114,26 +159,23 @@ def distribute_train(data):
     
     data_train, data_test, target_train, target_test = train_test_split(dt,target, test_size = 0.30, random_state = 20)
 
-    model = SVC(C=1.5,kernel="rbf", degree=3, random_state=0)
-    pred = model.fit(data_train, target_train)
-    clf = pred.predict(data_test)
-    return accuracy_score(target_test, clf)
+    # model = SVC(C=1.5,kernel="rbf", degree=3, random_state=0)
+    # pred = model.fit(data_train, target_train).predict(data_test)
+
+    # return accuracy_score(target_test, pred)
 
     # KNEIGH clf
-    #neigh = KNeighborsClassifier(n_neighbors=3)
-    #neigh.fit(data_train, target_train)
-    #pred = neigh.predict(data_test)
-    #return accuracy_score(target_test, pred)
+    neigh = KNeighborsClassifier(n_neighbors=3)
+    pred = neigh.fit(data_train, target_train).predict(data_test)
+    return accuracy_score(target_test, pred)
     
     # Naive clf
-    #gnb = GaussianNB()
-    #pred = gnb.fit(data_train, target_train).predict(data_test)
-    #return accuracy_score(target_test, pred, normalize = True)
+    # gnb = GaussianNB()
+    # pred = gnb.fit(data_train, target_train).predict(data_test)
+    # return accuracy_score(target_test, pred, normalize = True)
 
 
-df = part1_load("crude", "grain", 3)
-# print(df)
-# print(part3_tfidf(df))
-# print(doc_count(df, "venezuela"))
+df = part1_load("crude", "grain", 470)
+
 print("tf   ", distribute_train(df))
 print("tfidf", distribute_train(part3_tfidf(df)))
