@@ -166,7 +166,7 @@ def distribute_train(data):
     pred = neigh.fit(data_train, target_train).predict(data_test)
     return accuracy_score(target_test, pred)
     
-    # Naive model
+    # NaiveB model
     # gnb = GaussianNB()
     # pred = gnb.fit(data_train, target_train).predict(data_test)
     # return accuracy_score(target_test, pred, normalize = True)
