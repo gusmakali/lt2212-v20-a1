@@ -172,7 +172,7 @@ def distribute_train(data):
     # return accuracy_score(target_test, pred, normalize = True)
 
  
-df = part1_load("crude", "grain", 300)
+# df = part1_load("crude", "grain", 300)
 
-print("tf   ", distribute_train(df))
-print("tfidf", distribute_train(part3_tfidf(df)))
+# print("tf   ", distribute_train(df))
+# print("tfidf", distribute_train(part3_tfidf(df)))
